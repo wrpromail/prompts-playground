@@ -1,0 +1,4 @@
+zhipuai
+gradio
+jinja2
+pyyaml

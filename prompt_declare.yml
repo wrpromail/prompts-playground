@@ -1,0 +1,31 @@
+template_folder: "raw_prompts"
+template_declares:
+  - template_name: "slide_outline_generation"
+    description: "生成幻灯片大纲"
+    template_path: "a7.txt"
+    key: 
+      - name: "slide_title"
+        required: True
+      - name: "slide_description"
+        required: True
+      - name: "slide_purpose"
+        required: True
+      - name: "slide_additional_info"
+        required: False
+    example_input: '{"slide_title":"快销品市场的机遇与风险","slide_description":"就快销品市场的主要垂直行业进行介绍","slide_purpose":"给行业外的人员进行知识普及"}'
+  - template_name: "slide_page_generation"
+    description: "根据幻灯片某一页的大纲生成具体内容"
+    template_path: "a8.txt"
+    key:
+      - name: "slide_title"
+        required: True
+      - name: "slide_description"
+        required: True
+      - name: "slide_purpose"
+        required: True
+      - name: "slide_page_title"
+        required: True
+      - name: "slide_page_abstract"
+        required: True
+      - name: "slide_additional_info"
+        required: False
