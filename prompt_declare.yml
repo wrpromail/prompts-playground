@@ -43,3 +43,18 @@ template_declares:
     example_input: |
       {"src_text":"皆さん、こんにちは。今日はとても良い天気ですね。私は公園に散歩に来ました。花が咲き乱れ、鳥の鳴き声が耳に心地良いです。この美しい景色を楽しんでいます。こんな素敵な瞬間を大切にしたいです。",
       "dst_language": "french and chinese"}
+  - template_name: "text_abstract"
+    description: "文本摘要"
+    template_path: "a4.txt"
+    key:
+      - name: "file_content"
+        required: True 
+      - name: "file_context"
+        required: False
+      - name: "user_requirement"
+        required: True 
+      - name: "expect_length"
+        required: False 
+    example_input: |
+      {"file_content":"The latest research in artificial intelligence has led to the development of advanced neural networks capable of processing vast amounts of data in real-time. These networks, inspired by the human brain, can learn and adapt to new situations, enabling applications such as autonomous vehicles, personalized medicine, and smart homes. Furthermore, the integration of AI with the Internet of Things (IoT) has created new opportunities for efficient resource allocation, predictive maintenance, and enhanced customer experiences. As AI continues to evolve, it is expected to transform industries and revolutionize the way we live and work, driving economic growth and improving overall quality of life.", 
+      "user_requirement":"用中文进行摘要"}
