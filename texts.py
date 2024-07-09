@@ -1,4 +1,4 @@
-
+import random
 
 basic_usage_md="""
 ## step 1
@@ -24,3 +24,21 @@ curl -X POST http://127.0.0.1:7860/call/template_infer -s -H "Content-Type: appl
 ```
 可以阅读页面底部的‘通过API使用’，gradio 提供 python 与 javascript 客户端，可以方便研发人员快速进行 prompt 调试。
 """
+
+
+sample_prompt0="""
+想象你是一位来自2150年的时间旅行者。请描述你所在时代的日常生活,特别是在能源使用、交通方式和工作模式方面的重大变化。请详细解释这些变化是如何影响人类社会的。
+"""
+
+sample_prompt1="""
+你是一位著名的美食评论家,被邀请品尝一道融合了中国和墨西哥烹饪元素的创新菜品。请写一篇500字左右的评论,描述这道菜的口感、味道、视觉呈现,以及它如何平衡两种烹饪传统。同时,请分析这种跨文化融合对全球美食趋势的潜在影响。
+"""
+
+sample_prompt2="""
+设计一个新的棋类游戏,结合了国际象棋和围棋的元素。详细说明游戏规则、棋盘设计、胜利条件,以及每种棋子的移动方式和特殊能力。解释这个新游戏如何平衡策略性和复杂性,以及它可能吸引哪些类型的玩家。最后,探讨这种混合游戏对传统棋类运动可能产生的影响。
+"""
+def pick_random_sample_prompt():
+    import random
+    return random.choice(sample_prompts)
+
+sample_prompts = [sample_prompt0, sample_prompt1, sample_prompt2]

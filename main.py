@@ -56,7 +56,7 @@ def load_template_names(yaml_file: str) -> list:
             tn = item.get("template_name", None)
             if tn:
                 td["template_name"] = tn
-                td["example_input"] = item.get("example_input", None)
+                #td["example_input"] = item.get("example_input", None)
                 td["description"] = item.get("description", None)
                 keys = item.get("key", [])
                 required_keys = []
@@ -155,7 +155,7 @@ if __name__ == "__main__":
                     with gr.Row():
                         check_template_content = gr.Button(value="查看模板内容")
                         generate_mock_user_parameters = gr.Button(value="生成模拟用户输入参数")
-                    generated_prompt = gr.Textbox(label="generated_prompt", lines=3, show_copy_button=True)
+                    generated_prompt = gr.Textbox(label="generated_prompt", value=pick_random_sample_prompt ,lines=3, show_copy_button=True)
                     user_parameters = gr.Code(label="user_parameters", value='{}', language="json")
                     with gr.Row():
                         generated_prompt_render_click = gr.Button(value="渲染 prompt")
