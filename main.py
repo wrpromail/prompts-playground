@@ -2,7 +2,7 @@ import os
 import json
 
 from texts import *
-from src.llm_source import PublicGlm
+from src.llm_source import PublicGlm, LocalOllamaGlm
 from declare_reader import render_template, load_template_config
 
 import gradio as gr 
@@ -10,18 +10,32 @@ import gradio as gr
 global ModelSource
 global TemplateDeclareFile
 
-def load_model_click(method: str, model_source: str, model_name: str):
+
+def load_public_model(model_name: str, api_key: str):
     global ModelSource
     msg = "模型加载成功"
-    if method == "public_api":
-        if model_source and len(model_source) > 0:
-            os.environ.setdefault('GLM_API_KEY', model_source)
-        ModelSource = PublicGlm()
+    if api_key and len(api_key) > 0:
+        os.environ.setdefault('GLM_API_KEY', api_key)
+    ModelSource = PublicGlm(model_name=model_name)
     try:
         ModelSource.init_llm()
     except Exception as e:
         msg = f"模型加载失败, {e}"
     return msg
+
+def load_ollama_model(model_name: str, generate_url: str):
+    global ModelSource
+    msg = "模型加载成功"
+    ModelSource = LocalOllamaGlm(generate_url, model_name)
+    try:
+        ModelSource.init_llm()
+    except Exception as e:
+        msg = f"模型加载失败, {e}"
+    return msg
+
+def load_transformers_model(model_path: str, tokenizer_path: str):
+    pass
+
 
 def load_template_names(yaml_file: str) -> list:
     global TemplateDeclareFile
@@ -65,21 +79,49 @@ def template_infer(prompt: str):
     return rst['response'], rst['usage']
     
 
+custom_infer_parameters_default = """
+{
+ "max_tokens":512,
+ "infer_temperature":0.95, 
+ "top_p":0.7,
+ "do_sample": True,
+}
+"""
+
 if __name__ == "__main__":
     with gr.Blocks() as demo:
-        gr.Markdown(introduce_md)
         with gr.Row():
-            with gr.Column(scale=1):
-                gr.Markdown(model_load_md)
-                invoke_method = gr.Dropdown(["public_api", "local_transformer"], value="API调用", label="invoke_method", scale=1)
-                model_source = gr.Textbox(label="model_source", value="api key或本地模型地址",lines=1, scale=1)
-                model_name = gr.Textbox(label="model_name", value="", lines=1, scale=1)
-                max_tokens = gr.Number(label="infer_max_tokens", value=512, step=1, minimum=1, maximum=8192, scale=1)
-                temperature = gr.Number(label="infer_temperature", value=0.95, step=0.01, minimum=0, maximum=1, scale=1)
-                top_p = gr.Number(label="infer_top_p", value=0.70, step=0.01, minimum=0, maximum=1, scale=1)
-                load_model = gr.Button(value="加载模型")
-                load_model_result = gr.Textbox(label="load_model_result", lines=1)
-            with gr.Column(scale=4):
+            with gr.Column(scale=2):
+                with gr.Row():
+                    public_model_name = gr.Textbox(label="public_model_name", value="glm-4-air", lines=1, scale=2)
+                    public_model_api_key = gr.Textbox(label="public_model_api_key", value="", lines=1, scale=2)
+                    public_model_load_button = gr.Button("加载开放平台模型", scale=2)
+                with gr.Row():
+                    tgi_model_name = gr.Textbox(label="tgi_model_name", value="tgi", lines=1, scale=2)
+                    tgi_generate_url = gr.Textbox(label="tgi_generate_url", value="", lines=1, scale=2)
+                    tgi_model_load_button = gr.Button("加载tgi模型", scale=2)
+
+                with gr.Row():
+                    ollama_model_name = gr.Textbox(label="ollama_model_name", value="glm4", lines=1, scale=2)
+                    ollama_generate_url = gr.Textbox(label="ollama_generate_url", value="http://127.0.0.1:11434/api/generate", lines=1, scale=2)
+                    ollama_model_load_button = gr.Button("加载ollama模型", scale=2)
+
+                with gr.Row():
+                    transformers_model_path = gr.Textbox(label="transformers_model_path", value="", lines=1,scale=2)
+                    transformers_tokenizer_path = gr.Textbox(label="transformers_tokenizer_path", value="", lines=1, scale=2)
+                    transformers_model_load_button = gr.Button("加载transformers模型", scale=2)
+                
+                with gr.Row():
+                    vllm_model_path = gr.Textbox(label="vllm_model_path", value="", lines=1, scale=2)
+                    vllm_tokenizer_path = gr.Textbox(label="vllm_tokenizer_path", value="", lines=1, scale=2)
+                    vllm_model_load_button = gr.Button("加载vllm模型", scale=2)    
+                
+                load_model_result = gr.Textbox(label="load_model_result", lines=1, scale=2)                
+                
+            with gr.Column(scale=5):
+                with gr.Tab("使用说明"):
+                    gr.Markdown(basic_usage_md)
+
                 with gr.Tab("模板数据读取"):
                     prompt_declare_file = gr.Textbox(label="prompt_declare_file", value="prompt_declare.yml", scale=1)
                     prompt_declare_file_load = gr.Button(value="加载模板配置")
@@ -97,9 +139,14 @@ if __name__ == "__main__":
                     with gr.Row():
                         generated_prompt_infer_text = gr.Textbox(label="generated_prompt_infer",scale=3)
                         generated_prompt_infer_usage = gr.JSON(label="generated_prompt_infer_usage", scale=1)
+                    custom_infer_parameters = gr.Textbox(label="custom_infer_parameters", lines=3, value=custom_infer_parameters_default)
+                    infer_parameters_save = gr.Button("保存推理参数")
 
                     
-        load_model.click(load_model_click, inputs=[invoke_method, model_source, model_name],outputs=[load_model_result])
+        public_model_load_button.click(load_public_model, inputs=[public_model_name, public_model_api_key],outputs=[load_model_result])
+        ollama_model_load_button.click(load_ollama_model, inputs=[ollama_model_name, ollama_generate_url], outputs=[load_model_result])
+        transformers_model_load_button.click(load_transformers_model, inputs=[transformers_model_path, transformers_tokenizer_path], outputs=[load_model_result])
+
         generated_prompt_render_click.click(render_template_content, inputs=[template_name, user_parameters], outputs=[generated_prompt])
         generated_prompt_infer_click.click(template_infer, inputs=[generated_prompt], outputs=[generated_prompt_infer_text, generated_prompt_infer_usage ])
         prompt_declare_file_load.click(load_template_names,inputs=[prompt_declare_file], outputs=[template_load_message])

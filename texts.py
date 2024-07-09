@@ -1,16 +1,26 @@
 
 
-introduce_md = """
-"""
+basic_usage_md="""
+## step 1
+加载模型:可以使用开放平台，或本地使用 transformers、tgi、vllm 等框架运行的推理服务。注意同时只能加载一个模型，新的模型会覆盖之前的加载内容。
+## step 2
+查看 prompt 模板内容: 所有 prompt 模板都存储在 raw_prompts 目录下，然后通过 prompt_declare.yml 文件进行声明，在声明文件中，
+对 prompt 模板的参数、用途进行描述。可以通过‘模板数据读取’分页来查看声明文件，然后选择需要测试的 prompt 模板名称。
+## step 3
+通过修改自定义参数，渲染 prompt，然后推理得到结果。后续会添加性能测试、推理对比等功能。
+## step 4
+gradio 框架提供了 http API，比如你在页面上加载模型，然后可以通过调用以下两个 api 来渲染 prompt 与获取推理结果。
+```bash
+curl -X POST http://127.0.0.1:7860/call/render_template_content -s -H "Content-Type: application/json" -d '{
+  "data": [
+    "Hello!!",
+    "print('Hello World')"
+]}'
 
-model_load_md = """
-public_api 是指调用智谱公开 api 进行推理\n
-local_transformer 是指使用 transformers 库加载本地权重\n
-如果选择 public_api，请在 model_source 中填写 api_key。如果选择 local_transformer，请在 model_source 中填写权重路径。
+curl -X POST http://127.0.0.1:7860/call/template_infer -s -H "Content-Type: application/json" -d '{
+  "data": [
+    "Hello!!"
+]}
+```
+可以阅读页面底部的‘通过API使用’，gradio 提供 python 与 javascript 客户端，可以方便研发人员快速进行 prompt 调试。
 """
-
-ppt_outline_generate_md = """
-#### PPT 生成 prompt
-由于语言模型只能生成文本，不可能直接生成 ppt，所以 ppt 生成任务需要进行拆分为两步。第一步根据需求按页生成 ppt 大纲，第二步是根据每一页的大纲生成具体的 ppt 内容。
-"""
-

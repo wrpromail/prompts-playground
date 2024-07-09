@@ -29,3 +29,17 @@ template_declares:
         required: True
       - name: "slide_additional_info"
         required: False
+    example_input: |
+      '{"slide_title":"快销品市场的机遇与风险", "slide_description":"就快销品市场的主要垂直行业进行介绍","slide_purpose":"给行业外的人员进行知识普及",
+      "slide_page_title":"", "slide_page_abstract":""}'
+  - template_name: "common_translate"
+    description: "把用户的输入文本翻译为任意语言"
+    template_path: "a3.txt"
+    key:
+      - name: "src_text"
+        required: True 
+      - name: "dst_language"
+        required: True 
+    example_input: |
+      {"src_text":"皆さん、こんにちは。今日はとても良い天気ですね。私は公園に散歩に来ました。花が咲き乱れ、鳥の鳴き声が耳に心地良いです。この美しい景色を楽しんでいます。こんな素敵な瞬間を大切にしたいです。",
+      "dst_language": "french and chinese"}
