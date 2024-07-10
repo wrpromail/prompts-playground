@@ -3,3 +3,5 @@ gradio
 jinja2
 pyyaml
 requests
+langchain
+langchain-core
