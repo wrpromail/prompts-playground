@@ -58,3 +58,53 @@ template_declares:
     example_input: |
       {"file_content":"The latest research in artificial intelligence has led to the development of advanced neural networks capable of processing vast amounts of data in real-time. These networks, inspired by the human brain, can learn and adapt to new situations, enabling applications such as autonomous vehicles, personalized medicine, and smart homes. Furthermore, the integration of AI with the Internet of Things (IoT) has created new opportunities for efficient resource allocation, predictive maintenance, and enhanced customer experiences. As AI continues to evolve, it is expected to transform industries and revolutionize the way we live and work, driving economic growth and improving overall quality of life.", 
       "user_requirement":"用中文进行摘要"}
+  - template_name: "code_infilling"
+    description: "代码补全"
+    template_path: "a12.txt"
+    key: 
+      - name: "prefix_code"
+        required: True
+      - name: "suffix_code"
+        required: True
+      - name: "expected_function"
+        required: True
+      - name: "user_requirements"
+        required: False
+    example_input: |
+      {"prefix_code":"def","suffix_code":"\n","expected_function":"计算一个文件的哈希值"}
+  - template_name: "code_annotation"
+    description: "代码注释生成"
+    template_path: "a13.txt"
+    key: 
+      - name: "source_code"
+        required: True
+      - name: "annotation_language"
+        required: True
+      - name: "user_requirements"
+        required: False
+    example_input: |
+      {"code_content":"def add(a, b):\n    return a + b","annotation_language": "chinese"}
+  - template_name: "code_bug_fix"
+    description: "代码bug修复"
+    template_path: "a14.txt"
+    key: 
+      - name: "source_code"
+        required: True
+      - name: "bug_description"
+        required: True
+      - name: "user_requirements"
+        required: False
+    example_input: |
+      {"code_content":"def add(a, b):\n    return a + b","bug_description": "代码中存在一个bug，当输入为负数时，结果不正确"}
+  - template_name: "code_transfer"
+    description: "代码转换"
+    template_path: "a15.txt"
+    key: 
+      - name: "source_code"
+        required: True
+      - name: "target_language"
+        required: True
+      - name: "user_requirements"
+        required: False
+    example_input: |
+      {"code_content":"def add(a, b):\n    return a + b","target_language": "java"}

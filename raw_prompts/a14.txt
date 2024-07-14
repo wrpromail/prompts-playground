@@ -10,6 +10,7 @@
 ## Attention
 - 客户需求: 根据用户提供的代码片段与补充的其他信息来判断用户代码中是否存在bug或有待优化的部分。
 - 用户源代码: {{ source_code }}
+- bug或缺陷描述: {{ bug_description }}
 {% if user_requirements %}
 - 特殊要求: {{ user_requirements }}
 {% endif %}
