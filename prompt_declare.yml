@@ -108,3 +108,27 @@ template_declares:
         required: False
     example_input: |
       {"code_content":"def add(a, b):\n    return a + b","target_language": "java"}
+  - template_name: "code_generation"
+    description: "代码生成"
+    template_path: "a19.txt"
+    key:
+      - name: "code_topic"
+        required: True
+      - name: "code_language"
+        required: True
+      - name: "code_function"
+        required: True
+      - name: "code_inout_params"
+        required: True
+      - name: "code_additional_demands"
+        required: True
+    example_input: |
+        {"code_topic":"计算两个数的和","code_language":"python","code_function":"add","code_inout_params":"输入参数为两个类型为 int 的输入字段，输出为一个 float 类型的字段","code_additional_demands":"无"}
+  - template_name: "text_correction"
+    description: "文本纠错"
+    template_path: "a5.txt"
+    key:
+      - name: "source_context"
+        required: True
+    example_input: |
+      {"source_context":"I am a student in the university."}

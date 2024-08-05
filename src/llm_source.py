@@ -2,6 +2,8 @@ import os
 import requests
 
 from zhipuai import ZhipuAI
+from langchain_openai import ChatOpenAI
+
 
 class LLMSource:
     def __init__(self):
@@ -13,19 +15,21 @@ class LLMSource:
         }
 
     def init_llm(self):
-        pass 
+        pass
 
     def infer(self, prompt: str, **kwargs):
         params = self.default_infer_params.copy()
         params.update(kwargs)
-        pass 
-
-    def cleanup(self)-> bool:
         pass
+
+    def cleanup(self) -> bool:
+        pass
+
 
 class PublicGlm(LLMSource):
     def __init__(self, model_name="glm-4-air"):
         super().__init__()
+        self.cli = None
         self.model_name = model_name
 
     def _is_valid(self):
@@ -46,31 +50,32 @@ class PublicGlm(LLMSource):
         self.cli = ZhipuAI(api_key=self.api_key)
         print("GLM init success")
         return True
-        
+
     def infer(self, prompt: str, **kwargs):
         params = self.default_infer_params.copy()
-        params.update(kwargs) 
+        params.update(kwargs)
         response = self.cli.chat.completions.create(model=self.model_name, messages=
-                                                    [{"role": "user", "content": prompt},],stream=False, **params)
+        [{"role": "user", "content": prompt}, ], stream=False, **params)
         return {
             "response": response.choices[0].message.content,
-            "usage": response.usage.dict() # prompt_tokens completion_tokens total_tokens
+            "usage": response.usage.dict()  # prompt_tokens completion_tokens total_tokens
         }
 
     def cleanup(self):
         return True
-    
+
+
 class LocalOllamaGlm(LLMSource):
     def __init__(self, ollama_generate_ep: str, ollama_model_name: str):
         super().__init__()
         self.endpoint = ollama_generate_ep
         self.model_name = ollama_model_name
-    
+
     @staticmethod
     def check_url_availability(url):
         try:
             response = requests.head(url)
-        # 检查服务器响应的状态码是否为 200
+            # 检查服务器响应的状态码是否为 200
             if response.status_code == 200:
                 print("URL is accessible.")
                 return True
@@ -81,16 +86,15 @@ class LocalOllamaGlm(LLMSource):
             print(f"Failed to reach the URL: {e}")
             return False
 
-
     def init_llm(self):
         if not self.check_url_availability(self.endpoint):
             return False
         print("Local Ollama model init success")
-    
+
     def infer(self, prompt: str, **kwargs):
         params = self.default_infer_params.copy()
         params.update(kwargs)
-        
+
         data = {
             "model": self.model_name,
             "prompt": prompt,
@@ -101,25 +105,38 @@ class LocalOllamaGlm(LLMSource):
             response = requests.post(self.endpoint, json=data)
             response.raise_for_status()  # 检查请求是否成功
             response_data = response.json()
-            
+
             return {
                 "response": response_data.get('response'),
-                #"usage": response_data.get('usage', {})  # 根据实际API响应调整
+                # "usage": response_data.get('usage', {})  # 根据实际API响应调整
                 "usage": None
             }
         except requests.RequestException as e:
             print(f"An error occurred: {e}")
             return None
-    
+
     def cleanup(self):
         return True
 
 
-class LocalTfGlm(LLMSource):
-    pass
+class LocalGlm(LLMSource):
+    def __init__(self, base_url: str, model_name: str = 'glm_130B', api_key: str = 'a', temperature: float = 0.3):
+        super().__init__()
+        self.cli = None
+        self.base_url = base_url
+        self.openai_api_key = api_key
+        self.temperature = temperature
+        self.model = model_name
 
-class LocalTgiGlm(LLMSource):
-    pass
+    def init_llm(self):
+        self.cli = ChatOpenAI(timeout=120, base_url=self.base_url, openai_api_key=self.openai_api_key,
+                              max_tokens=8096, temperature=self.temperature, model_name=self.model)
 
-class LocalVllmGlm(LLMSource):
-    pass
+    def infer(self, prompt: str, **kwargs):
+        return {
+            "response": self.cli.invoke(prompt).content,
+            "usage": None
+        }
+
+    def cleanup(self) -> bool:
+        return True

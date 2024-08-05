@@ -5,3 +5,4 @@ pyyaml
 requests
 langchain
 langchain-core
+langchain-openai
