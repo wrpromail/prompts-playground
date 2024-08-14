@@ -131,4 +131,34 @@ template_declares:
       - name: "source_context"
         required: True
     example_input: |
-      {"source_context":"I am a student in the university."}
+        {"source_context":"I am a student in the university."}
+  - template_name: "prompt_optimize"
+    description: "优化用户的提示词"
+    template_path: "a17.txt"
+    key:
+      - name: "raw_prompt"
+        required: True
+    example_input: |
+        {"raw_prompt":"最近压力大，怎么办"}
+  - template_name: "object_extract"
+    description: "提取助手"
+    template_path: "a18.txt"
+    key:
+      - name: "source_text"
+        required: True
+    example_input: |
+        {"source_text":"The quick brown fox jumps over the lazy dog."}
+  - template_name: "text_generation"
+    description: "通用写作助手"
+    template_path: "a1.txt"
+    key:
+      - name: "text_title"
+        required: True
+      - name: "text_description"
+        required: True
+      - name: "text_topic"
+        required: True
+      - name: "text_form"
+        required: True
+    example_input: |
+        {}
